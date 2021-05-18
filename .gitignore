@@ -1,4 +1,5 @@
 secrets.py
+config.py
 .vscode
 .Trash*
 boot_out.txt

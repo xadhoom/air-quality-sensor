@@ -6,11 +6,11 @@ import busio
 import tasko
 import time
 
-# Get wifi details and more from a secrets.py file
+# Get wifi details and more from a config.py file
 try:
-    from secrets import secrets
+    from config import config
 except ImportError:
-    print("WiFi secrets are kept in secrets.py, please add them there!")
+    print("WiFi config is kept in config.py, please add them there!")
     raise
 
 wifi = None
@@ -25,7 +25,7 @@ def init(status_light):
     global wifi
 
     wifi = adafruit_esp32spi_wifimanager.ESPSPI_WiFiManager(
-        esp, secrets, status_light)
+        esp, config, status_light)
     # wifi.reset()
     wifi.connect()
 
