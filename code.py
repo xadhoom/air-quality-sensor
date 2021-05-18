@@ -3,6 +3,7 @@ from measurements import Measurements
 import bme
 import board
 import busio
+import hum_utils
 import led
 import neopixel
 import pm25
@@ -31,7 +32,13 @@ async def read_sgp():
     # according to datasheet, this sensor must be read
     # every second to ensure proper operation of the dynamic baseline
     # compensation algorithm
-    eco2, tvoc = sgp30.read_sgp()
+    t = measurements.get_temp()
+    p = measurements.get_pressure()
+    h = measurements.get_humidity()
+    abs_hum = None
+    if t and p and h:
+        abs_hum = hum_utils.humidity_to_gm3(t, p, h)
+    eco2, tvoc = sgp30.read_sgp(abs_hum)
     measurements.put_eco2(eco2)
     measurements.put_tvoc(tvoc)
 
