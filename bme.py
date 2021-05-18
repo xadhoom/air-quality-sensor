@@ -1,7 +1,13 @@
 import adafruit_bme280
-#import adafruit_bme680_clear as adafruit_bme680
 import adafruit_bme680
 import math
+
+try:
+    from config import config
+    elevation = int(config["elevation"])
+except ImportError:
+    print("Could not import config or elevation not found, setting elevation to 0.")
+    elevation = 0
 
 
 bme280_sensor = None
@@ -19,21 +25,30 @@ def read_bme280():
     hum = bme280_sensor.humidity
     temp = bme280_sensor.temperature
     press = bme280_sensor.pressure
+    sea_press = sea_level_pressure(press, temp)
 
-    print("BME280  T: %0.1fC, H: %0.1f%%, P: %0.1f hPa" % (temp, hum, press))
+    print("BME280  T: %0.1fC, H: %0.1f%%, P: %0.1f hPa" %
+          (temp, hum, sea_press))
 
-    return temp, hum, press
+    return temp, hum, sea_press
 
 
 def read_bme680():
     hum = bme680_sensor.humidity
     temp = bme680_sensor.temperature
     press = bme680_sensor.pressure
+    sea_press = sea_level_pressure(press, temp)
     gas = bme680_sensor.gas
     # altitude = bme680_sensor.altitude
     aqi_gas = math.log(gas) + 0.04 * hum
 
     print("BME680  T: %0.1fC, H: %0.1f%%, P: %0.1f hPa, R: %d ohm, %0.1f AQI" % (
-        temp, hum, press, gas, aqi_gas))
+        temp, hum, sea_press, gas, aqi_gas))
 
-    return temp, hum, press, gas, aqi_gas
+    return temp, hum, sea_press, gas, aqi_gas
+
+
+def sea_level_pressure(p, t):
+    var1 = 1 - ((0.0065 * elevation) / (t + (0.0065 * elevation) + 273.15))
+    var1 = pow(var1, -5.257)
+    return p * var1
