@@ -75,8 +75,6 @@ tasko.schedule(hz=1, coroutine_function=read_sgp)
 tasko.schedule(hz=1/30, coroutine_function=read_bmes)
 tasko.schedule(hz=1/30, coroutine_function=read_pm25)
 tasko.schedule(hz=1/60, coroutine_function=get_voltage)
-tasko.schedule(hz=1/60, coroutine_function=measurements.publish,
-               immediate=False)
-tasko.schedule(
-    hz=1/1800, coroutine_function=wifi.async_set_time, immediate=False)
+tasko.schedule_later(hz=1/60, coroutine_function=measurements.publish)
+tasko.schedule_later(hz=1/1800, coroutine_function=wifi.async_set_time)
 tasko.run()
