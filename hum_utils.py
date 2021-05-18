@@ -26,7 +26,4 @@ def humidity_to_gm3(temp, pressure, humidity):
     # and using the constant for water vapor of 461.5
     abs_hum = e / (461.5 * temp_k)
 
-    print("Ew: %0.4f ewt: %0.4f e: %0.4f, abs %0.4f kg/m3" %
-          (ew, ew_t, e, abs_hum))
-
     return abs_hum * 1000
