@@ -48,6 +48,18 @@ class Measurements:
         meas = {"value": value, "ts": self.now_ts()}
         self.pm_data.append(meas)
 
+    def get_humidity(self):
+        # not ideal if one sensor is broken, but, oh well
+        return self.last_and_average([self.bme280_hum, self.bme680_hum])
+
+    def get_temp(self):
+        # not ideal if one sensor is broken, but, oh well
+        return self.last_and_average([self.bme280_temp, self.bme680_temp])
+
+    def get_pressure(self):
+        # not ideal if one sensor is broken, but, oh well
+        return self.last_and_average([self.bme280_pres, self.bme680_pres])
+
     def reset(self):
         print("Resetting all measurements")
         self.bme280_temp = []
@@ -73,3 +85,18 @@ class Measurements:
 
     def now_ts(self):
         return time.time()
+
+    def last_and_average(self, *args):
+        value = 0
+        sensors = 0
+        list_of_sensors = args[0]
+
+        for sensor_data in list_of_sensors:
+            if len(sensor_data):
+                sensors = sensors + 1
+                value = value + sensor_data[-1]["value"]
+
+        if sensors and value:
+            return (value / sensors)
+        else:
+            return None
