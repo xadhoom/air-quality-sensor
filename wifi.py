@@ -30,6 +30,10 @@ def init(status_light):
     wifi.connect()
 
 
+def get_esp():
+    return esp
+
+
 def set_time():
     ntp = NTP(esp)
     while True:

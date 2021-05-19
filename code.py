@@ -5,6 +5,7 @@ import board
 import busio
 import hum_utils
 import led
+import mqtt
 import neopixel
 import pm25
 import sgp30
@@ -76,6 +77,8 @@ sgp30.init(i2c)
 pm25.init(i2c)
 wifi.init(status_light)
 wifi.set_time()
+mqtt.init(wifi.get_esp())
+mqtt.connect()
 
 # tasko.schedule(hz=5, coroutine_function=blink_led)
 tasko.schedule(hz=1, coroutine_function=read_sgp)

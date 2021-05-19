@@ -1,3 +1,4 @@
+import mqtt
 import time
 
 
@@ -81,7 +82,45 @@ class Measurements:
 
     async def publish(self):
         print("Publishing data")
+        await mqtt.publish(["gas", "eco2"], self.get_eco2())
+        await mqtt.publish(["gas", "tvoc"], self.get_tvoc())
         self.reset()
+
+    def get_eco2(self):
+        data = self.get_mean_value(self.sgp30_eco2)
+        if not data:
+            return []
+        ts, avg = data
+        data_points = [{
+            "sensor": "sgp30",
+            "eco2": avg,
+            "ts": ts
+        }]
+        return data_points
+
+    def get_tvoc(self):
+        data = self.get_mean_value(self.sgp30_tvoc)
+        if not data:
+            return []
+        ts, avg = data
+        data_points = [{
+            "sensor": "sgp30",
+            "tvoc": avg,
+            "ts": ts
+        }]
+        return data_points
+
+    def get_mean_value(self, data_serie):
+        count = len(data_serie)
+        if not count:
+            return ()
+
+        value = 0
+        last_ts = data_serie[-1]["ts"]
+        for measure in data_serie:
+            value = value + measure["value"]
+
+        return last_ts, value/count
 
     def now_ts(self):
         return time.time()
