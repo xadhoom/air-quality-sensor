@@ -33,13 +33,18 @@ async def blink_led():
 
 
 async def read_sgp():
-    # according to datasheet, this sensor must be read
-    # every second to ensure proper operation of the dynamic baseline
-    # compensation algorithm
     abs_hum = bme.get_humidity_to_gm3()
     eco2, tvoc = sgp30.read_sgp(abs_hum)
     measurements.put_eco2(eco2)
     measurements.put_tvoc(tvoc)
+
+
+async def poll_sgp():
+    # according to datasheet, this sensor must be read
+    # every second to ensure proper operation of the dynamic baseline
+    # compensation algorithm
+    abs_hum = bme.get_humidity_to_gm3()
+    sgp30.read_sgp(abs_hum)
 
 
 async def read_bmes():
@@ -79,10 +84,11 @@ mqtt.init(wifi.get_esp())
 mqtt.connect()
 
 # tasko.schedule(hz=5, coroutine_function=blink_led)
-tasko.schedule(hz=1, coroutine_function=read_sgp)
-tasko.schedule(hz=1/30, coroutine_function=read_bmes)
-tasko.schedule(hz=1/30, coroutine_function=read_pm25)
+tasko.schedule(hz=1, coroutine_function=poll_sgp)
+tasko.schedule(hz=1/60, coroutine_function=read_sgp)
+tasko.schedule(hz=1/60, coroutine_function=read_bmes)
 tasko.schedule(hz=1/60, coroutine_function=get_voltage)
-tasko.schedule_later(hz=1/60, coroutine_function=measurements.publish)
+tasko.schedule(hz=1/120, coroutine_function=read_pm25)
+tasko.schedule_later(hz=1/300, coroutine_function=measurements.publish)
 tasko.schedule_later(hz=1/1800, coroutine_function=wifi.async_set_time)
 tasko.run()
