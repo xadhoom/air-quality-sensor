@@ -8,8 +8,12 @@ import mqtt
 import neopixel
 import pm25
 import sgp30
+import supervisor
 import tasko
 import wifi
+
+# Disable auto reload on USB activity
+supervisor.disable_autoreload()
 
 # Devices setup
 status_light = neopixel.NeoPixel(board.NEOPIXEL, 1, brightness=0.1)
