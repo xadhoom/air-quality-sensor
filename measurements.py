@@ -82,45 +82,93 @@ class Measurements:
 
     async def publish(self):
         print("Publishing data")
-        await mqtt.publish(["gas", "eco2"], self.get_eco2())
-        await mqtt.publish(["gas", "tvoc"], self.get_tvoc())
+        await mqtt.publish(["gas", "eco2"], self.prepare_eco2_data())
+        await mqtt.publish(["gas", "tvoc"], self.prepare_tvoc_data())
+        await mqtt.publish(["humidity"], self.prepare_hum_data())
+        await mqtt.publish(["temperature"], self.prepare_temp_data())
+        await mqtt.publish(["pressure"], self.prepare_pressure_data())
         self.reset()
 
-    def get_eco2(self):
-        data = self.get_mean_value(self.sgp30_eco2)
-        if not data:
-            return []
-        ts, avg = data
-        data_points = [{
-            "sensor": "sgp30",
-            "eco2": avg,
-            "ts": ts
-        }]
+    def prepare_pressure_data(self):
+        data_points = []
+
+        for data in self.bme280_pres:
+            data_points.append({
+                "sensor": "bme280",
+                "pressure": data["value"],
+                "ts": data["ts"]
+            })
+
+        for data in self.bme680_pres:
+            data_points.append({
+                "sensor": "bme680",
+                "pressure": data["value"],
+                "ts": data["ts"]
+            })
+
         return data_points
 
-    def get_tvoc(self):
-        data = self.get_mean_value(self.sgp30_tvoc)
-        if not data:
-            return []
-        ts, avg = data
-        data_points = [{
-            "sensor": "sgp30",
-            "tvoc": avg,
-            "ts": ts
-        }]
+    def prepare_temp_data(self):
+        data_points = []
+
+        for data in self.bme280_temp:
+            data_points.append({
+                "sensor": "bme280",
+                "temperature": data["value"],
+                "ts": data["ts"]
+            })
+
+        for data in self.bme680_temp:
+            data_points.append({
+                "sensor": "bme680",
+                "temperature": data["value"],
+                "ts": data["ts"]
+            })
+
         return data_points
 
-    def get_mean_value(self, data_serie):
-        count = len(data_serie)
-        if not count:
-            return ()
+    def prepare_hum_data(self):
+        data_points = []
 
-        value = 0
-        last_ts = data_serie[-1]["ts"]
-        for measure in data_serie:
-            value = value + measure["value"]
+        for data in self.bme280_hum:
+            data_points.append({
+                "sensor": "bme280",
+                "humidity": data["value"],
+                "ts": data["ts"]
+            })
 
-        return last_ts, value/count
+        for data in self.bme680_hum:
+            data_points.append({
+                "sensor": "bme680",
+                "humidity": data["value"],
+                "ts": data["ts"]
+            })
+
+        return data_points
+
+    def prepare_eco2_data(self):
+        data_points = []
+
+        for data in self.sgp30_eco2:
+            data_points.append({
+                "sensor": "sgp30",
+                "eco2": data["value"],
+                "ts": data["ts"]
+            })
+
+        return data_points
+
+    def prepare_tvoc_data(self):
+        data_points = []
+
+        for data in self.sgp30_tvoc:
+            data_points.append({
+                "sensor": "sgp30",
+                "tvoc": data["value"],
+                "ts": data["ts"]
+            })
+
+        return data_points
 
     def now_ts(self):
         return time.time()
