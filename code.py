@@ -4,6 +4,7 @@ import bme
 import board
 import busio
 import led
+import microcontroller
 import mqtt
 import neopixel
 import pm25
@@ -74,6 +75,18 @@ async def get_voltage():
     measurements.put_battery(vbat)
 
 
+async def get_rssi():
+    rssi = wifi.get_rssi()
+    measurements.put_rssi(rssi)
+    print("RSSI: %0.1f dBm" % rssi)
+
+
+async def get_cpu_temp():
+    t = microcontroller.cpu.temperature
+    measurements.put_cpu_temp(t)
+    print("CPU Temp: %0.1fC" % t)
+
+
 # init functions
 bme.init(i2c)
 sgp30.init(i2c)
@@ -88,6 +101,8 @@ tasko.schedule(hz=1, coroutine_function=poll_sgp)
 tasko.schedule(hz=1/60, coroutine_function=read_sgp)
 tasko.schedule(hz=1/60, coroutine_function=read_bmes)
 tasko.schedule(hz=1/60, coroutine_function=get_voltage)
+tasko.schedule(hz=1/60, coroutine_function=get_rssi)
+tasko.schedule(hz=1/60, coroutine_function=get_cpu_temp)
 tasko.schedule(hz=1/120, coroutine_function=read_pm25)
 tasko.schedule_later(hz=1/300, coroutine_function=measurements.publish)
 tasko.schedule_later(hz=1/1800, coroutine_function=wifi.async_set_time)

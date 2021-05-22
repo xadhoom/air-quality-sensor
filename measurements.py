@@ -6,6 +6,14 @@ class Measurements:
     def __init__(self):
         self.reset()
 
+    def put_cpu_temp(self, value):
+        meas = {"value": value, "ts": self.now_ts()}
+        self.cpu_temp.append(meas)
+
+    def put_rssi(self, value):
+        meas = {"value": value, "ts": self.now_ts()}
+        self.wfi_rssi.append(meas)
+
     def put_eco2(self, value):
         meas = {"value": value, "ts": self.now_ts()}
         self.sgp30_eco2.append(meas)
@@ -79,15 +87,98 @@ class Measurements:
         self.pm_data = []
 
         self.battery_voltage = []
+        self.cpu_temp = []
+        self.wfi_rssi = []
 
     async def publish(self):
         print("Publishing data")
         await mqtt.publish(["gas", "eco2"], self.prepare_eco2_data())
         await mqtt.publish(["gas", "tvoc"], self.prepare_tvoc_data())
+        await mqtt.publish(["gas", "ohm"], self.prepare_bme680gas_ohm_data())
+        await mqtt.publish(["gas", "aqi"], self.prepare_bme680gas_aqi_data())
         await mqtt.publish(["humidity"], self.prepare_hum_data())
         await mqtt.publish(["temperature"], self.prepare_temp_data())
         await mqtt.publish(["pressure"], self.prepare_pressure_data())
+        await mqtt.publish(["pm"], self.prepare_pm_data())
+        await mqtt.publish(["system", "battery"], self.prepare_battery_data())
+        await mqtt.publish(["system", "cpu_temp"], self.prepare_cpu_temp_data())
+        await mqtt.publish(["system", "wifi"], self.prepare_rssi_data())
         self.reset()
+
+    def prepare_cpu_temp_data(self):
+        data_points = []
+
+        for data in self.wfi_rssi:
+            data_points.append({
+                "sensor": "cpu",
+                "temperature": data["value"],
+                "ts": data["ts"]
+            })
+
+        return data_points
+
+    def prepare_rssi_data(self):
+        data_points = []
+
+        for data in self.wfi_rssi:
+            data_points.append({
+                "sensor": "wifi",
+                "rssi": data["value"],
+                "ts": data["ts"]
+            })
+
+        return data_points
+
+    def prepare_battery_data(self):
+        data_points = []
+
+        for data in self.battery_voltage:
+            data_points.append({
+                "sensor": "system",
+                "voltage": data["value"],
+                "ts": data["ts"]
+            })
+
+        return data_points
+
+    def prepare_pm_data(self):
+        # value is {'pm100': 0.9, 'pm10': 0.3, 'pm25': 0.9}
+        data_points = []
+
+        for data in self.pm_data:
+            data_points.append({
+                "sensor": "pmsa003i",
+                "ts": data["ts"],
+                "pm10.0": data["value"]["pm100"],
+                "pm2.5": data["value"]["pm25"],
+                "pm1.0": data["value"]["pm10"],
+            })
+
+        return data_points
+
+    def prepare_bme680gas_ohm_data(self):
+        data_points = []
+
+        for data in self.bme680_gas:
+            data_points.append({
+                "sensor": "bme680",
+                "ohm": data["value"],
+                "ts": data["ts"]
+            })
+
+        return data_points
+
+    def prepare_bme680gas_aqi_data(self):
+        data_points = []
+
+        for data in self.bme680_gas_aqi:
+            data_points.append({
+                "sensor": "bme680",
+                "aqi": data["value"],
+                "ts": data["ts"]
+            })
+
+        return data_points
 
     def prepare_pressure_data(self):
         data_points = []

@@ -34,6 +34,14 @@ def get_esp():
     return esp
 
 
+def get_rssi():
+    # wifi signal
+    rssi = -120
+    if (wifi.esp.is_connected):
+        rssi = wifi.signal_strength()
+    return rssi
+
+
 def set_time():
     ntp = NTP(esp)
     while True:
