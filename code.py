@@ -29,10 +29,6 @@ vbat_voltage = AnalogIn(board.VOLTAGE_MONITOR)
 measurements = Measurements()
 
 
-async def blink_led():
-    await led.blink(status_light)
-
-
 async def read_sgp():
     abs_hum = bme.get_humidity_to_gm3()
     eco2, tvoc = sgp30.read_sgp(abs_hum)
@@ -99,8 +95,9 @@ wifi.set_time()
 mqtt.init(wifi.get_esp())
 mqtt.connect()
 
-# tasko.schedule(hz=5, coroutine_function=blink_led)
 tasko.schedule(hz=1, coroutine_function=poll_sgp)
+tasko.schedule(hz=1/2, coroutine_function=led.blink,
+               led=status_light, interval=0.1, times=2)
 tasko.schedule(hz=1/60, coroutine_function=read_sgp)
 tasko.schedule(hz=1/60, coroutine_function=read_bmes)
 tasko.schedule(hz=1/60, coroutine_function=get_voltage)
