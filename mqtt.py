@@ -43,6 +43,13 @@ def connect():
     mqtt_client.connect()
 
 
+async def ping():
+    try:
+        mqtt_client.ping()
+    except (RuntimeError, MQTT.MMQTTException) as e:
+        print("MQTT disconnected...")
+
+
 async def publish(topic_segments, payload):
     retries = 0
     max_retries = 5
