@@ -12,6 +12,7 @@ import sgp30
 import supervisor
 import tasko
 import wifi
+import gc
 
 # Disable auto reload on USB activity
 supervisor.disable_autoreload()
@@ -86,6 +87,13 @@ async def get_cpu_temp():
     print("CPU Temp: %0.1fC" % t)
 
 
+async def mem_free():
+    before = gc.mem_free()
+    gc.collect()
+    after = gc.mem_free()
+    print("Mem free before: %d, after collect %d" % (before, after))
+
+
 # init functions
 bme.init(i2c)
 sgp30.init(i2c)
@@ -99,6 +107,7 @@ tasko.schedule(hz=1, coroutine_function=poll_sgp)
 tasko.schedule(hz=1/2, coroutine_function=led.blink,
                led=status_light, interval=0.1, times=2)
 tasko.schedule(hz=1/20, coroutine_function=mqtt.ping)
+#tasko.schedule(hz=1/20, coroutine_function=mem_free)
 tasko.schedule(hz=1/60, coroutine_function=read_sgp)
 tasko.schedule(hz=1/60, coroutine_function=read_bmes)
 tasko.schedule(hz=1/60, coroutine_function=get_voltage)
@@ -109,7 +118,7 @@ tasko.schedule_later(hz=1/300, coroutine_function=measurements.publish)
 tasko.schedule_later(hz=1/1800, coroutine_function=wifi.async_set_time)
 
 try:
-tasko.run()
+    tasko.run()
 except:
     print("Ayeee!!!!!, Restarting")
     supervisor.reload()
