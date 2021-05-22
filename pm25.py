@@ -34,6 +34,7 @@ def init(i2c):
 
     pm25_sensor = PM25(i2c, rst, set)
     pm25_sensor.shutdown()
+    print("PMSA003I sensor started (idle)!")
 
 
 def calculate_aqi(pm_sensor_reading):

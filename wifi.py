@@ -28,6 +28,7 @@ def init(status_light):
         esp, config, status_light)
     # wifi.reset()
     wifi.connect()
+    print("WiFi started and connected!")
 
 
 def get_esp():

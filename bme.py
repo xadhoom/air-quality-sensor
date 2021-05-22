@@ -20,7 +20,9 @@ def init(i2c):
     global bme280_sensor, bme680_sensor
 
     bme280_sensor = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)
+    print("BME280 sensor started!")
     bme680_sensor = adafruit_bme680.Adafruit_BME680_I2C(i2c)
+    print("BME680 sensor started!")
 
 
 def read_bme280():
