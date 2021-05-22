@@ -108,7 +108,7 @@ class Measurements:
     def prepare_cpu_temp_data(self):
         data_points = []
 
-        for data in self.wfi_rssi:
+        for data in self.cpu_temp:
             data_points.append({
                 "sensor": "cpu",
                 "temperature": data["value"],
