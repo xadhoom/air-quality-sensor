@@ -107,4 +107,9 @@ tasko.schedule(hz=1/60, coroutine_function=get_cpu_temp)
 tasko.schedule(hz=1/120, coroutine_function=read_pm25)
 tasko.schedule_later(hz=1/300, coroutine_function=measurements.publish)
 tasko.schedule_later(hz=1/1800, coroutine_function=wifi.async_set_time)
+
+try:
 tasko.run()
+except:
+    print("Ayeee!!!!!, Restarting")
+    supervisor.reload()
