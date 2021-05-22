@@ -17,7 +17,4 @@ def read_sgp(abs_hum=None):
 
     eco2, tvoc = sgp30_sensor.iaq_measure()
 
-    print("eCO2 = %d ppm \t TVOC = %d ppb (Hum correction: %0.3f g/m3)" %
-          (eco2, tvoc, abs_hum or 0))
-
     return eco2, tvoc

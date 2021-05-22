@@ -39,6 +39,9 @@ async def read_sgp():
     measurements.put_eco2(eco2)
     measurements.put_tvoc(tvoc)
 
+    print("eCO2 = %d ppm \t TVOC = %d ppb (Hum correction: %0.3f g/m3)" %
+          (eco2, tvoc, abs_hum or 0))
+
 
 async def poll_sgp():
     # according to datasheet, this sensor must be read
