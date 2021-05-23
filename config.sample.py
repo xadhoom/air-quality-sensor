@@ -8,6 +8,7 @@ config = {
     'mqtt_user': 'mqtt_username',
     'mqtt_pass': 'a_super_secret_mqtt_pass',
     'mqtt_root_topic': 'root_topic',
+    'sensor-id': 'some-sensor-id',
     'latitude': '90.000000',  # https://www.latlong.net/
     'longitude': '135.000000',
     'elevation': 42,  # used to correct pressure readings to sea level

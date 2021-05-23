@@ -53,8 +53,8 @@ async def ping():
 async def publish(topic_segments, payload):
     retries = 0
     max_retries = 5
-    root = config["mqtt_root_topic"]
-    topic = "/".join([root] + topic_segments)
+    topic = build_topic(topic_segments)
+    payload = map(add_probe_id, payload)
     payload = json.dumps(payload)
 
     while True:
@@ -73,3 +73,16 @@ async def publish(topic_segments, payload):
                 mqtt_client.connect()
             except Exception as e_recon:
                 print("Whoa, MQTT reconnect error...: %r" % e_recon)
+
+
+def build_topic(segments):
+    root = config["mqtt_root_topic"]
+    topic = "/".join([root] + config["sensor-id"] + segments)
+
+    return topic
+
+
+def add_probe_id(data_point):
+    data_point["probe-id"] = config["sensor-id"]
+
+    return data_point
