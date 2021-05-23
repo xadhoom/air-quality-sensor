@@ -54,7 +54,7 @@ async def publish(topic_segments, payload):
     retries = 0
     max_retries = 5
     topic = build_topic(topic_segments)
-    payload = map(add_probe_id, payload)
+    payload = list(map(add_probe_id, payload))
     payload = json.dumps(payload)
 
     while True:
@@ -77,7 +77,7 @@ async def publish(topic_segments, payload):
 
 def build_topic(segments):
     root = config["mqtt_root_topic"]
-    topic = "/".join([root] + config["sensor-id"] + segments)
+    topic = "/".join([root, config["sensor-id"]] + segments)
 
     return topic
 
