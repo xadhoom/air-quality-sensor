@@ -117,6 +117,6 @@ tasko.schedule_later(hz=1/1800, coroutine_function=wifi.async_set_time)
 
 try:
     tasko.run()
-except:
-    print("Ayeee!!!!!, Restarting")
+except Exception as e:
+    print("Ayeee!!!!!, Restarting: %r" % e)
     supervisor.reload()
