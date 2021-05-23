@@ -92,10 +92,10 @@ class Measurements:
 
     async def publish(self):
         print("Publishing data")
-        await mqtt.publish(["gas", "eco2"], self.prepare_eco2_data())
-        await mqtt.publish(["gas", "tvoc"], self.prepare_tvoc_data())
-        await mqtt.publish(["gas", "ohm"], self.prepare_bme680gas_ohm_data())
-        await mqtt.publish(["gas", "aqi"], self.prepare_bme680gas_aqi_data())
+        await mqtt.publish(["eco2"], self.prepare_eco2_data())
+        await mqtt.publish(["tvoc"], self.prepare_tvoc_data())
+        await mqtt.publish(["ohm"], self.prepare_bme680gas_ohm_data())
+        await mqtt.publish(["aqi"], self.prepare_bme680gas_aqi_data())
         await mqtt.publish(["humidity"], self.prepare_hum_data())
         await mqtt.publish(["temperature"], self.prepare_temp_data())
         await mqtt.publish(["pressure"], self.prepare_pressure_data())
