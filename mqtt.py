@@ -19,8 +19,8 @@ def init(esp):
     )
 
     mqtt_client.on_connect = on_connect
-    mqtt_client.on_disconnect = on_disconnect
-    mqtt_client.on_publish = on_publish
+    # mqtt_client.on_disconnect = on_disconnect
+    # mqtt_client.on_publish = on_publish
 
 
 def on_connect(client, userdata, flags, rc):
@@ -29,13 +29,13 @@ def on_connect(client, userdata, flags, rc):
     print("Connected to MQTT Broker!")
 
 
-def on_disconnect(client, userdata, rc):
-    # This method is called when the client is disconnected
-    print("Disconnected from MQTT Broker!")
+# def on_disconnect(client, userdata, rc):
+#     # This method is called when the client is disconnected
+#     print("Disconnected from MQTT Broker!")
 
 
-def on_publish(client, userdata, topic, rc):
-    print("A message has been published!")
+# def on_publish(client, userdata, topic, rc):
+#     print("A message has been published!")
 
 
 def connect():
