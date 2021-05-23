@@ -63,10 +63,8 @@ async def read_bmes():
 
 async def read_pm25():
     aq_reading = await pm25.sample_aq_sensor()
-    # aqi, aqi_category = pm25.calculate_aqi(aq_reading["pm25"])
     measurements.put_pm_data(aq_reading)
     print("PM sensor data: %r" % aq_reading)
-    # print("%r %r" % (aqi, aqi_category))
 
 
 async def get_voltage():

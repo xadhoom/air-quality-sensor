@@ -37,45 +37,6 @@ def init(i2c):
     print("PMSA003I sensor started (idle)!")
 
 
-def calculate_aqi(pm_sensor_reading):
-    """Returns a calculated air quality index (AQI)
-    and category as a tuple.
-    NOTE: The AQI returned by this function should ideally be measured
-    using the 24-hour concentration average. Calculating a AQI without
-    averaging will result in higher AQI values than expected.
-    :param float pm_sensor_reading: Particulate matter sensor value.
-
-    """
-    # Check sensor reading using EPA breakpoint (Clow-Chigh)
-    if 0.0 <= pm_sensor_reading <= 12.0:
-        # AQI calculation using EPA breakpoints (Ilow-IHigh)
-        aqi_val = map_range(int(pm_sensor_reading), 0, 12, 0, 50)
-        aqi_cat = "Good"
-    elif 12.1 <= pm_sensor_reading <= 35.4:
-        aqi_val = map_range(int(pm_sensor_reading), 12, 35, 51, 100)
-        aqi_cat = "Moderate"
-    elif 35.5 <= pm_sensor_reading <= 55.4:
-        aqi_val = map_range(int(pm_sensor_reading), 36, 55, 101, 150)
-        aqi_cat = "Unhealthy for Sensitive Groups"
-    elif 55.5 <= pm_sensor_reading <= 150.4:
-        aqi_val = map_range(int(pm_sensor_reading), 56, 150, 151, 200)
-        aqi_cat = "Unhealthy"
-    elif 150.5 <= pm_sensor_reading <= 250.4:
-        aqi_val = map_range(int(pm_sensor_reading), 151, 250, 201, 300)
-        aqi_cat = "Very Unhealthy"
-    elif 250.5 <= pm_sensor_reading <= 350.4:
-        aqi_val = map_range(int(pm_sensor_reading), 251, 350, 301, 400)
-        aqi_cat = "Hazardous"
-    elif 350.5 <= pm_sensor_reading <= 500.4:
-        aqi_val = map_range(int(pm_sensor_reading), 351, 500, 401, 500)
-        aqi_cat = "Hazardous"
-    else:
-        print("Invalid PM2.5 concentration")
-        aqi_val = -1
-        aqi_cat = None
-    return aqi_val, aqi_cat
-
-
 async def sample_aq_sensor():
     """
     Samples PM2.5 sensor
